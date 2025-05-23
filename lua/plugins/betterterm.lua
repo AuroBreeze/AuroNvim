@@ -1,5 +1,6 @@
 return {
   'CRAG666/betterTerm.nvim',
+  lazy =true,
   keys = {
     {
       mode = { 'n', 't' },

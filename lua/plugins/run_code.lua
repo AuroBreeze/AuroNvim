@@ -12,6 +12,7 @@
 return {
     "CRAG666/code_runner.nvim",
     dependencies = { "linux-cultist/venv-selector.nvim"},
+    lazy = true,
     opts = {
       filetype = {
         python = "python" .. " -u $fileName"
