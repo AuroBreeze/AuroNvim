@@ -1,3 +1,6 @@
 return {
-    dir = "C://code//quick-py" 
+    "AuroBreeze/quick-py",
+    config = function()
+        require("quick-py").setup({})
+    end
 }
