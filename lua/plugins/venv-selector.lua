@@ -14,19 +14,6 @@
 return {
   'linux-cultist/venv-selector.nvim',
   dependencies = { 'neovim/nvim-lspconfig', 'nvim-telescope/telescope.nvim', 'mfussenegger/nvim-dap-python',
-  -- {"CRAG666/code_runner.nvim",
-  --   dependencies = { "linux-cultist/venv-selector.nvim"},
-  --   opts = {
-  --     filetype = {
-  --       python = get_python_cmd() .. " -u $fileName"
-  --     },
-  --     project_path = vim.fn.getcwd(),
-  --     before_run = "w", -- 保存文件
-  --     focus = false,    -- 不跳转到终端
-  --   },
-  --   keys = {
-  --     { "<leader>rr", "<cmd>RunCode<CR>", desc = "Run Code" }
-  --   }}
 },
 
   config = function()

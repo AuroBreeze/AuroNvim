@@ -1,5 +1,7 @@
 return {
   "saghen/blink.cmp",
+  lazy = true,
+  event = "VeryLazy",
   optional = true,
   dependencies = {{ "giuxtaposition/blink-cmp-copilot" ,dependencies={"zbirenbaum/copilot.lua"}},"zbirenbaum/copilot.lua"},
   opts = {
