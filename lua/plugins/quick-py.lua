@@ -3,7 +3,8 @@ return {
     dependencies={
         "ahmedkhalf/project.nvim"
     },
-    -- lazy =true,
+    lazy =true,
+    event = "VeryLazy",
     patterns = { "*.py" },
     config = function()
         require("quick-py").setup({})
