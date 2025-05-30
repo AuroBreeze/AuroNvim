@@ -5,8 +5,4 @@ return {
     },
     lazy =true,
     event = "VeryLazy",
-    patterns = { "*.py" },
-    config = function()
-        require("quick-py").setup({})
-    end
 }
