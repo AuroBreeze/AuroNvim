@@ -6,7 +6,7 @@ vim.g.mapleader = " "
 local keymap = vim.keymap
 
 -- ---------- 插入模式 ---------- ---
-keymap.set("i", "jk", "<ESC>")
+keymap.set("i", "jj", "<ESC>")
 
 -- ---------- 视觉模式 ---------- ---
 -- 单行或多行移动
