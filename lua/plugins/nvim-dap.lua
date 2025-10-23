@@ -145,6 +145,33 @@ return {
         { text = sign[1], texthl = sign[2] or "DiagnosticInfo", linehl = sign[3], numhl = sign[3] }
       )
     end
+    -- keep dap-ui open across sessions
+    local dap = require("dap")
+    local ok_dapui, dapui = pcall(require, "dapui")
+    if ok_dapui then
+      local function clear_close_listeners()
+        for k, _ in pairs(dap.listeners.before.event_terminated) do
+          dap.listeners.before.event_terminated[k] = nil
+        end
+        for k, _ in pairs(dap.listeners.before.event_exited) do
+          dap.listeners.before.event_exited[k] = nil
+        end
+        for k, _ in pairs(dap.listeners.after.event_terminated) do
+          dap.listeners.after.event_terminated[k] = nil
+        end
+        for k, _ in pairs(dap.listeners.after.event_exited) do
+          dap.listeners.after.event_exited[k] = nil
+        end
+      end
+
+      dap.listeners.after.event_initialized["dapui_keep"] = function()
+        clear_close_listeners()
+        dapui.open()
+        vim.schedule(function()
+          require("dap").repl.open()
+        end)
+      end
+
       -- initial cleanup in case other configs already set listeners
       clear_close_listeners()
 
