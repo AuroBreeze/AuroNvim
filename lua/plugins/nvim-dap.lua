@@ -11,7 +11,103 @@ return {
       "theHamsta/nvim-dap-virtual-text",
       opts = {},
     },
+    {
+    -- Ensure C/C++ debugger is installed
+    "mason-org/mason.nvim",
+    optional = true,
+    opts = { ensure_installed = { "codelldb" } },
+  }
   },
+  opts = function()
+    local dap = require("dap")
+    -- resolve codelldb path (prefer Mason installation)
+    local codelldb_cmd = "codelldb"
+    local ok_mason, mason_registry = pcall(require, "mason-registry")
+    local uv = vim.loop
+    local function path_exists(p)
+      local st = uv.fs_stat(p)
+      return st and (st.type == "file" or st.type == "link")
+    end
+    local candidates = {}
+    if ok_mason then
+      local ok_pkg, pkg = pcall(mason_registry.get_package, "codelldb")
+      if ok_pkg and pkg and pkg.is_installed and pkg:is_installed() then
+        local install
+        if type(pkg.get_install_path) == "function" then
+          local ok_ip, ip = pcall(function()
+            return pkg:get_install_path()
+          end)
+          if ok_ip then
+            install = ip
+          end
+        end
+        if not install and type(pkg.install_path) == "string" then
+          install = pkg.install_path
+        end
+        if install then
+          if vim.fn.has("win32") == 1 then
+            table.insert(candidates, install .. "\\extension\\adapter\\codelldb.exe")
+            table.insert(candidates, install .. "\\adapter\\codelldb.exe")
+          else
+            table.insert(candidates, install .. "/extension/adapter/codelldb")
+            table.insert(candidates, install .. "/adapter/codelldb")
+          end
+        end
+      end
+    end
+    local data = vim.fn.stdpath("data")
+    if vim.fn.has("win32") == 1 then
+      table.insert(candidates, data .. "\\mason\\bin\\codelldb.cmd")
+      table.insert(candidates, data .. "\\mason\\bin\\codelldb.exe")
+    else
+      table.insert(candidates, data .. "/mason/bin/codelldb")
+    end
+    for _, p in ipairs(candidates) do
+      if path_exists(p) or vim.fn.executable(p) == 1 then
+        codelldb_cmd = p
+        break
+      end
+    end
+    if not dap.adapters["codelldb"] then
+      require("dap").adapters["codelldb"] = {
+        type = "server",
+        host = "localhost",
+        port = "${port}",
+        executable = {
+          command = codelldb_cmd,
+          args = {
+            "--port",
+            "${port}",
+          },
+        },
+      }
+    end
+    for _, lang in ipairs({ "c", "cpp" }) do
+      dap.configurations[lang] = {
+        {
+          type = "codelldb",
+          request = "launch",
+          name = "Launch file",
+          stopOnEntry = false,
+          initCommands = {
+            "settings set target.process.thread.step-avoid-libraries true",
+          },
+          runInTerminal = true,
+          program = function()
+            return vim.fn.input("Path to executable: ", vim.fn.getcwd() .. "/", "file")
+          end,
+          cwd = "${workspaceFolder}",
+        },
+        {
+          type = "codelldb",
+          request = "attach",
+          name = "Attach to process",
+          pid = require("dap.utils").pick_process,
+          cwd = "${workspaceFolder}",
+        },
+      }
+    end
+  end,
 
   -- stylua: ignore
   keys = {
@@ -49,6 +145,73 @@ return {
         { text = sign[1], texthl = sign[2] or "DiagnosticInfo", linehl = sign[3], numhl = sign[3] }
       )
     end
+    -- keep dap-ui open across sessions
+    local dap = require("dap")
+    local ok_dapui, dapui = pcall(require, "dapui")
+    if ok_dapui then
+      local function clear_close_listeners()
+        for k, _ in pairs(dap.listeners.before.event_terminated) do
+          dap.listeners.before.event_terminated[k] = nil
+        end
+        for k, _ in pairs(dap.listeners.before.event_exited) do
+          dap.listeners.before.event_exited[k] = nil
+        end
+        for k, _ in pairs(dap.listeners.after.event_terminated) do
+          dap.listeners.after.event_terminated[k] = nil
+        end
+        for k, _ in pairs(dap.listeners.after.event_exited) do
+          dap.listeners.after.event_exited[k] = nil
+        end
+      end
+
+      dap.listeners.after.event_initialized["dapui_keep"] = function()
+        clear_close_listeners()
+        dapui.open()
+        vim.schedule(function()
+          require("dap").repl.open()
+        end)
+      end
+
+      -- initial cleanup in case other configs already set listeners
+      clear_close_listeners()
+
+      -- if something still closes the UI on end, reopen it immediately
+      dap.listeners.after.event_terminated["dapui_keep_reopen"] = function()
+        dapui.open()
+      end
+      dap.listeners.after.event_exited["dapui_keep_reopen"] = function()
+        dapui.open()
+      end
+    end
     -- setup dap config by VsCode launch.json file
+    -- ensure configurations exist for c/cpp even if opts() didn't run yet
+    local function ensure_cfg(lang)
+      if not dap.configurations[lang] or vim.tbl_isempty(dap.configurations[lang]) then
+        dap.configurations[lang] = {
+          {
+            type = "codelldb",
+            request = "launch",
+            name = "Launch file",
+            stopOnEntry = false,
+            initCommands = {
+              "settings set target.process.thread.step-avoid-libraries true",
+            },
+            program = function()
+              return vim.fn.input("Path to executable: ", vim.fn.getcwd() .. "/", "file")
+            end,
+            cwd = "${workspaceFolder}",
+          },
+          {
+            type = "codelldb",
+            request = "attach",
+            name = "Attach to process",
+            pid = require("dap.utils").pick_process,
+            cwd = "${workspaceFolder}",
+          },
+        }
+      end
+    end
+    ensure_cfg("c")
+    ensure_cfg("cpp")
   end,
 }
