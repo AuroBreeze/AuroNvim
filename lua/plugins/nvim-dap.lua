@@ -92,7 +92,7 @@ return {
           initCommands = {
             "settings set target.process.thread.step-avoid-libraries true",
           },
-          runInTerminal = true,
+          runInTerminal = (vim.fn.has("win32") == 0),
           program = function()
             return vim.fn.input("Path to executable: ", vim.fn.getcwd() .. "/", "file")
           end,
@@ -167,9 +167,6 @@ return {
       dap.listeners.after.event_initialized["dapui_keep"] = function()
         clear_close_listeners()
         dapui.open()
-        vim.schedule(function()
-          require("dap").repl.open()
-        end)
       end
 
       -- initial cleanup in case other configs already set listeners
