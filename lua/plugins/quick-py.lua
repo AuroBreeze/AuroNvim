@@ -2,6 +2,7 @@ return {
   "AuroBreeze/quick-py",
   dependencies = {
     "ahmedkhalf/project.nvim",
+    "CRAG666/betterTerm.nvim"
   },
   lazy = true,
   event = "VeryLazy",
