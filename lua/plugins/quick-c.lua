@@ -1,13 +1,16 @@
 return {
   "AuroBreeze/quick-c",
   -- 三重懒加载：任一触发即可加载
+  lazy = true,
+  event = "VeryLazy",
+  branch = "dev",
   ft = { "c", "cpp" },
   keys = {
-    { "<leader>cb", desc = "Quick-c: Build" },
-    { "<leader>cr", desc = "Quick-c: Run" },
-    { "<leader>cR", desc = "Quick-c: Build & Run" },
-    { "<leader>cD", desc = "Quick-c: Debug" },
-    { "<leader>cM", desc = "Quick-c: Make targets (Telescope)" },
+    { "<leader>cqb", desc = "Quick-c: Build" },
+    { "<leader>cqr", desc = "Quick-c: Run" },
+    { "<leader>cqR", desc = "Quick-c: Build & Run" },
+    { "<leader>cqD", desc = "Quick-c: Debug" },
+    { "<leader>cqM", desc = "Quick-c: Make targets (Telescope)" },
   },
   cmd = {
     "QuickCBuild", "QuickCRun", "QuickCBR", "QuickCDebug",
@@ -56,6 +59,8 @@ return {
         -- 指定优先使用的 make 程序：
         --   - Windows 可设 "make" 或 "mingw32-make"；未设置时按可执行探测
         prefer = nil,
+
+        prefer_force = true,
         -- 固定工作目录（不设置则由插件根据当前文件自动搜索）
         cwd = nil,
         -- Makefile 搜索策略（未显式设置 cwd 时生效）：
@@ -77,17 +82,31 @@ return {
           --   'never' 始终走默认策略（betterTerm 优先，失败回退内置）
           choose_terminal = 'auto',
         },
+         
+        args = {
+            prompt = false,
+            default = "",
+            remember = true,
+          },
       },
       keymaps = {
         -- 设为 false 可不注入任何默认键位（你可自行映射命令）
         enabled = true,
         -- 置为 nil 或 '' 可单独禁用某个映射
-        build = '<leader>cb',
-        run = '<leader>cr',
-        build_and_run = '<leader>cR',
-        debug = '<leader>cD',
+        build = '<leader>cqb',
+        run = '<leader>cqr',
+        build_and_run = '<leader>cqR',
+        debug = '<leader>cqD',
         -- 注意：键位注入使用 unique=true，不会覆盖你已有的映射；冲突时跳过
-        make = '<leader>cM',
+        make = '<leader>cqM',
+      },
+      diagnostics = {
+        quickfix = {
+          enabled = true,
+          open = 'warning',   -- always | error | warning | never
+          jump = 'warning',   -- always | error | warning | never
+          use_telescope = true,
+        },
       },
     })
   end,
