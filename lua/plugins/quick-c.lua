@@ -73,6 +73,7 @@ return {
       },
       make = {
         -- 启用/禁用 make 集成
+        no_dash_C = true, -- 调用 make 时不加 -C 参数（某些 make 版本不支持）
         enabled = true,
         -- 指定优先使用的 make 程序：
         --   - 可为字符串或列表；按顺序探测可执行：

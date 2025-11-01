@@ -3,7 +3,7 @@ return {
   lazy=true,
   event = "VeryLazy",
   opts = {
-    suggestion = { enabled = true },
+    suggestion = { enabled = true},
     panel = { enabled = true }
   }
 }

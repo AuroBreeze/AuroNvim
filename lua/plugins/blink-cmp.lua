@@ -11,6 +11,11 @@ return {
     opts = function(_, opts)
       opts = opts or {}
 
+      -- ✅ 禁用自动补全，只手动触发
+      opts.completion = {
+        auto_complete = false,
+      }
+
       -- ✅ 键位映射
       opts.keymap = {
         preset = "default",
@@ -18,13 +23,12 @@ return {
         ["<Tab>"] = { "select_next", "fallback" },
         ["<S-Tab>"] = { "select_prev", "fallback" },
         ["<C-e>"] = { "cancel" },
-        ["<C-Space>"] = { "show", "fallback" },
+        ["<C-Space>"] = { "show", "fallback" }, -- 手动触发
       }
 
-      -- 🎨 外观美化
+      -- 🎨 外观
       opts.appearance = {
         use_nvim_cmp_as_default = true,
-        use_icons = true,
         menu = {
           border = "rounded",
           max_height = 15,
@@ -48,7 +52,7 @@ return {
 
       -- 🪄 Copilot 初始化
       require("copilot").setup({
-        suggestion = { enabled = false },
+        suggestion = { enabled = false }, -- 禁用内联建议
         panel = { enabled = false },
       })
 
