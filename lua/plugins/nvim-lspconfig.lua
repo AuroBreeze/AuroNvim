@@ -1,18 +1,30 @@
+-- 文件路径: ~/.config/nvim/lua/plugins/nvim-lspconfig.lua
 return {
   "neovim/nvim-lspconfig",
-  lazy = true,
-  event = "VeryLazy",
+  event = { "BufReadPost", "BufNewFile" },
   config = function()
+    -- ✅ 在这里 require
     local lspconfig = require("lspconfig")
+
+    local capabilities = vim.lsp.protocol.make_client_capabilities()
+    pcall(function()
+      capabilities = require("blink.cmp").get_lsp_capabilities(capabilities)
+    end)
+
+    -- ✅ clangd 配置
     lspconfig.clangd.setup({
       cmd = {
-        "E:/engine_software/LLVM/bin/clangd.exe",
-        "--query-driver=E:/engine_software/mingw32/bin/*",
-        "--all-scopes-completion",
+        "D:/engine_software/LLVM/bin/clangd.exe",
+        "--query-driver=D:/engine_software/mingw64/bin/gcc.exe",
+        "--background-index",
+        "--clang-tidy",
+        "--completion-style=detailed",
         "--header-insertion=never",
-        "--compile-commands-dir=.",
       },
-      -- 这里可以继续加 on_attach/capabilities 等
+      capabilities = capabilities,
+      init_options = {
+        fallbackFlags = { "-std=c11"},
+      },
     })
   end,
 }
