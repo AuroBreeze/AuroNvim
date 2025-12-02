@@ -23,7 +23,7 @@ return {
       },
       capabilities = capabilities,
       init_options = {
-        fallbackFlags = { "-std=c11"},
+        fallbackFlags = {"-xc", "-std=c11"},
       },
     })
   end,
