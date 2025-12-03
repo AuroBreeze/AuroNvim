@@ -4,7 +4,7 @@ return {
     lazy = true,
     event = "VeryLazy",
     dependencies = {
-      { "giuxtaposition/blink-cmp-copilot", dependencies = { "zbirenbaum/copilot.lua" } },
+      { "fang2hou/blink-copilot", dependencies = { "zbirenbaum/copilot.lua" } },
       "zbirenbaum/copilot.lua",
     },
 
@@ -38,17 +38,28 @@ return {
 
       -- ⚙️ Sources
       opts.sources = {
-        default = { "copilot", "lsp", "path", "buffer", "snippets" },
+        default = { "copilot", "lsp", "path", "buffer", "snippets", "minuet" },
         providers = {
           copilot = {
             name = "copilot",
-            module = "blink-cmp-copilot",
+            module = "blink-copilot",
             kind = "Copilot",
             score_offset = 100,
             async = true,
           },
+          minuet = {
+              name = 'minuet',
+              module = 'minuet.blink',
+              async = true,
+              -- Should match minuet.config.request_timeout * 1000,
+              -- since minuet.config.request_timeout is in seconds
+              timeout_ms = 3000,
+              score_offset = 75, -- Gives minuet higher priority among suggestions
+            },
         },
       }
+
+      opts.completion = { trigger = { prefetch_on_insert = false } },
 
       -- 🪄 Copilot 初始化
       require("copilot").setup({
