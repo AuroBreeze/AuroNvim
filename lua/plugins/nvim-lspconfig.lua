@@ -1,5 +1,6 @@
 return {
   "neovim/nvim-lspconfig",
+  lazy = true,
   event = { "BufReadPost", "BufNewFile" },
   config = function()
     local lspconfig = require("lspconfig")
@@ -21,13 +22,13 @@ return {
       map("n", "gp", "<cmd>Lspsaga peek_definition<CR>") -- 预览定义（代码）
 
       -- ⭐ 真正的「跳转到定义」（跨文件）
-      map("n", "gd", vim.lsp.buf.definition)
+      map("n", "gd", "<cmd>Lspsaga finder def<CR>")
       -- 跳到声明
       map("n", "gD", vim.lsp.buf.declaration)
       -- 跳到实现
-      map("n", "gi", vim.lsp.buf.implementation)
+      map("n", "gi", "<cmd>Lspsaga finder imp<CR>")
       -- 查引用
-      map("n", "gr", vim.lsp.buf.references)
+      map("n", "gr", "<cmd>Lspsaga finder ref<CR>")
     end
 
     -- ✅ clangd 配置

@@ -1,7 +1,5 @@
 return {
   "karb94/neoscroll.nvim",
-    lazy =true,
-    event="VeryLazy",
   config = function()
     require("neoscroll").setup({
       easing_function = "linear", -- 加速曲线（可选：linear, quadratic, cubic, sine）

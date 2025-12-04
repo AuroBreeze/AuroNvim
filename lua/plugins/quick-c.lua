@@ -2,6 +2,7 @@ return {
   "AuroBreeze/quick-c",
   -- 三重懒加载：任一触发即可加载
   ft = { "c", "cpp" },
+  lazy = true,
   branch = "dev",
   keys = {
     { "<leader>cqb", desc = "Quick-c: Build" },

@@ -1,3 +1,4 @@
 return{
-    "nvim-mini/mini.nvim"
+    "nvim-mini/mini.nvim",
+    lazy = true,
 }
