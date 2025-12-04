@@ -16,8 +16,10 @@ return {
         vim.keymap.set(mode, lhs, rhs, opts)
       end
 
-      -- Hover 文档
-      map("n", "K", vim.lsp.buf.hover)
+      map("n", "K", "<cmd>Lspsaga hover_doc<CR>")        -- 漂亮 hover（文档）
+      
+      map("n", "gp", "<cmd>Lspsaga peek_definition<CR>") -- 预览定义（代码）
+
       -- ⭐ 真正的「跳转到定义」（跨文件）
       map("n", "gd", vim.lsp.buf.definition)
       -- 跳到声明
